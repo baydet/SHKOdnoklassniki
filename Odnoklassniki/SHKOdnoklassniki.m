@@ -241,7 +241,7 @@ static SHKOdnoklassniki *__loginSharer = nil;
     [request setHTTPBody:body];
 
     // set the content-length
-    NSString *postLength = [NSString stringWithFormat:@"%d", [body length]];
+    NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     return request;
 }

@@ -34,7 +34,7 @@
     {
         nc.navigationBar.tintColor = OKColor;
     }
-    nc.navigationBar.titleTextAttributes = @{UITextAttributeTextColor : [UIColor whiteColor]};
+    nc.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor whiteColor]};
 
     return nc;
 }
