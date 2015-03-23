@@ -256,6 +256,11 @@ static SHKOdnoklassniki *__loginSharer = nil;
 
 - (void)okDidLogin
 {
+    id <SHKSharerDelegate> o = self.shareDelegate;
+    if ([o respondsToSelector:@selector(sharerAuthDidFinish:success:)])
+    {
+        [o sharerAuthDidFinish:self success:YES];
+    }
     [self authorizationFormSave](nil);
 }
 
