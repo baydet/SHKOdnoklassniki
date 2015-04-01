@@ -277,6 +277,11 @@ static SHKOdnoklassniki *__loginSharer = nil;
 - (void)okWillDismissAuthorizeControllerByCancel:(BOOL)canceled
 {
     [self authorizationFormCancel](nil);
+    id <SHKSharerDelegate> o = self.shareDelegate;
+    if ([o respondsToSelector:@selector(sharerAuthDidFinish:success:)])
+    {
+        [o sharerAuthDidFinish:self success:NO];
+    }
 }
 
 
