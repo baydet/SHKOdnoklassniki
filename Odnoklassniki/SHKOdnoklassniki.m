@@ -106,7 +106,6 @@ static SHKOdnoklassniki *__loginSharer = nil;
             return NO;
     }
 
-    [self sendDidStart];
     return YES;
 }
 
@@ -139,9 +138,18 @@ static SHKOdnoklassniki *__loginSharer = nil;
                             NSDictionary *attachments = [self attachmentDictionaryWitImageId:data1[@"photos"][0][@"assigned_photo_id"]];
 
                             OKMediaTopicPostViewController *postViewController = [OKMediaTopicPostViewController postViewControllerWithAttachments:attachments];
+                            __weak typeof (postViewController) wpostViewController = postViewController;
+                            postViewController.resultBlock = ^(BOOL result, BOOL canceled, NSError *error) {
+                                if (result)
+                                    [self sendDidFinish];
+                                else if (canceled)
+                                    [self sendDidCancel];
+                                else
+                                    [self sendDidFailWithError:error];
+                                [wpostViewController dismiss];
+                            };
                             [postViewController presentInViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
 
-                            [self sendDidFinish];
                         }                              errorBlock:^(NSError *error1) {
                             [self sendDidFailWithError:error1];
                         }];
