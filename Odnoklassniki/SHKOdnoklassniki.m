@@ -54,7 +54,7 @@ static SHKOdnoklassniki *__loginSharer = nil;
 
 + (NSString *)sharerTitle
 {
-    return @"Одноклассники";
+    return @"OK";
 }
 
 - (void)promptAuthorization
