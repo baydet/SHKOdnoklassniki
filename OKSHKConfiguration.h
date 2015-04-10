@@ -7,14 +7,10 @@
 #import "SHKConfiguration.h"
 
 
-@interface OKSHKConfiguration : DefaultSHKConfigurator
-
+@protocol OKSHKConfiguration <NSObject>
+@required
 - (NSString *)odnoklassnikiAppId;
-
 - (NSString *)odnoklassnikiSecret;
-
 - (NSString *)odnoklassnikiAppKey;
-
 - (NSArray *)odnoklassnikiPermissions;
-
 @end
