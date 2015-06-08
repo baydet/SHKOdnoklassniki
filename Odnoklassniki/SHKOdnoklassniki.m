@@ -54,7 +54,7 @@ static SHKOdnoklassniki *__loginSharer = nil;
 
 + (NSString *)sharerTitle
 {
-    return @"Одноклассники";
+    return @"OK";
 }
 
 - (void)promptAuthorization
@@ -106,7 +106,6 @@ static SHKOdnoklassniki *__loginSharer = nil;
             return NO;
     }
 
-    [self sendDidStart];
     return YES;
 }
 
@@ -139,9 +138,18 @@ static SHKOdnoklassniki *__loginSharer = nil;
                             NSDictionary *attachments = [self attachmentDictionaryWitImageId:data1[@"photos"][0][@"assigned_photo_id"]];
 
                             OKMediaTopicPostViewController *postViewController = [OKMediaTopicPostViewController postViewControllerWithAttachments:attachments];
+                            __weak typeof (postViewController) wpostViewController = postViewController;
+                            postViewController.resultBlock = ^(BOOL result, BOOL canceled, NSError *error) {
+                                if (result)
+                                    [self sendDidFinish];
+                                else if (canceled)
+                                    [self sendDidCancel];
+                                else
+                                    [self sendDidFailWithError:error];
+                                [wpostViewController dismiss];
+                            };
                             [postViewController presentInViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
 
-                            [self sendDidFinish];
                         }                              errorBlock:^(NSError *error1) {
                             [self sendDidFailWithError:error1];
                         }];
@@ -241,7 +249,7 @@ static SHKOdnoklassniki *__loginSharer = nil;
     [request setHTTPBody:body];
 
     // set the content-length
-    NSString *postLength = [NSString stringWithFormat:@"%d", [body length]];
+    NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     return request;
 }
@@ -256,6 +264,11 @@ static SHKOdnoklassniki *__loginSharer = nil;
 
 - (void)okDidLogin
 {
+    id <SHKSharerDelegate> o = self.shareDelegate;
+    if ([o respondsToSelector:@selector(sharerAuthDidFinish:success:)])
+    {
+        [o sharerAuthDidFinish:self success:YES];
+    }
     [self authorizationFormSave](nil);
 }
 
@@ -272,6 +285,11 @@ static SHKOdnoklassniki *__loginSharer = nil;
 - (void)okWillDismissAuthorizeControllerByCancel:(BOOL)canceled
 {
     [self authorizationFormCancel](nil);
+    id <SHKSharerDelegate> o = self.shareDelegate;
+    if ([o respondsToSelector:@selector(sharerAuthDidFinish:success:)])
+    {
+        [o sharerAuthDidFinish:self success:NO];
+    }
 }
 
 
